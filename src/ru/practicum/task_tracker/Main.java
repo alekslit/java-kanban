@@ -57,12 +57,12 @@ public class Main {
         System.out.println(taskTracker.getAllSubtasks());
         System.out.println(taskTracker.getAllEpics());*/
 
-        /*taskTracker.deleteAllEpic();
+        /*taskTracker.deleteAllEpics();
         System.out.println("___________Удалили Эпики________________");
         System.out.println(taskTracker.getAllSubtasks());
         System.out.println(taskTracker.getAllEpics());*/
 
-        // Распечаатаем список Сабтасков определённого эпика:
+        // Распечатаем список Сабтасков определённого эпика:
         System.out.println(taskTracker.getEpicSubtasks(epic1Id));
 
         // Поменяем статус Тасков и Сабтасков через методы обновления, и проверим изменение статусов всех объектов:

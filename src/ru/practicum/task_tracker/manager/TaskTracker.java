@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskTracker {
-    private HashMap<Integer, Task> tasks = new HashMap<>();
-    private HashMap<Integer, Epic> epics = new HashMap<>();
-    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    final private HashMap<Integer, Task> tasks = new HashMap<>();
+    final private HashMap<Integer, Epic> epics = new HashMap<>();
+    final private HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private int currentIdNumber = 0;
 
     // Генерируем новый ID:
@@ -23,7 +23,7 @@ public class TaskTracker {
     public ArrayList<Task> getAllTasks() {
         if (tasks.isEmpty()) {
             System.out.println("tasks = null");
-            return null;
+            return new ArrayList<>();
         }
 
         return new ArrayList<>(tasks.values());
@@ -33,7 +33,7 @@ public class TaskTracker {
     public ArrayList<Epic> getAllEpics() {
         if (epics.isEmpty()) {
             System.out.println("epics = null");
-            return null;
+            return new ArrayList<>();
         }
 
         return new ArrayList<>(epics.values());
@@ -43,7 +43,7 @@ public class TaskTracker {
     public ArrayList<Subtask> getAllSubtasks() {
         if (subtasks.isEmpty()) {
             System.out.println("subtasks = null");
-            return null;
+            return new ArrayList<>();
         }
 
         return new ArrayList<>(subtasks.values());
@@ -60,7 +60,7 @@ public class TaskTracker {
     }
 
     // Удаление всех Эпиков:
-    public void deleteAllEpic() {
+    public void deleteAllEpics() {
         if (epics.isEmpty()) {
             System.out.println("epics = null");
             return;
