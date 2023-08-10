@@ -3,10 +3,10 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
     // ID Сабтасков, на которые разделён Эпик:
-    private ArrayList<Integer> subtaskIds;
+    private final ArrayList<Integer> subtaskIds;
 
     public Epic(String name, String description) {
-        super(name, description, "NEW");
+        super(name, description, TaskStatus.NEW);
         subtaskIds = new ArrayList<>();
     }
 

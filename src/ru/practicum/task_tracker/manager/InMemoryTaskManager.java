@@ -3,24 +3,31 @@ package ru.practicum.task_tracker.manager;
 import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
+import ru.practicum.task_tracker.tasks.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TaskTracker {
-    final private HashMap<Integer, Task> tasks = new HashMap<>();
-    final private HashMap<Integer, Epic> epics = new HashMap<>();
-    final private HashMap<Integer, Subtask> subtasks = new HashMap<>();
+public class InMemoryTaskManager implements TaskManager {
+
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+
+    HistoryManager historyManager = new Managers().getDefaultHistory();
+
     private int currentIdNumber = 0;
 
     // Генерируем новый ID:
-    private int generateId() {
+    @Override
+    public int generateId() {
 
         return currentIdNumber++;
     }
 
     // Получение списка всех Тасков:
-    public ArrayList<Task> getAllTasks() {
+    @Override
+    public ArrayList<Task> getAllTasksList() {
         if (tasks.isEmpty()) {
             System.out.println("tasks = null");
             return new ArrayList<>();
@@ -30,7 +37,8 @@ public class TaskTracker {
     }
 
     // Получение списка всех Эпиков:
-    public ArrayList<Epic> getAllEpics() {
+    @Override
+    public ArrayList<Epic> getAllEpicsList() {
         if (epics.isEmpty()) {
             System.out.println("epics = null");
             return new ArrayList<>();
@@ -40,7 +48,8 @@ public class TaskTracker {
     }
 
     // Получение списка всех Сабтасков:
-    public ArrayList<Subtask> getAllSubtasks() {
+    @Override
+    public ArrayList<Subtask> getAllSubtasksList() {
         if (subtasks.isEmpty()) {
             System.out.println("subtasks = null");
             return new ArrayList<>();
@@ -50,6 +59,7 @@ public class TaskTracker {
     }
 
     // Удаление всех Тасков:
+    @Override
     public void deleteAllTasks() {
         if (tasks.isEmpty()) {
             System.out.println("tasks = null");
@@ -60,6 +70,7 @@ public class TaskTracker {
     }
 
     // Удаление всех Эпиков:
+    @Override
     public void deleteAllEpics() {
         if (epics.isEmpty()) {
             System.out.println("epics = null");
@@ -76,6 +87,7 @@ public class TaskTracker {
     }
 
     // Удаление всех Сабтасков:
+    @Override
     public void deleteAllSubtasks() {
         if (subtasks.isEmpty()) {
             System.out.println("subtasks = null");
@@ -90,37 +102,50 @@ public class TaskTracker {
         }
     }
 
-    // Получение по ID определённого Таска:
+    // Получение по ID определённого Таска + сохранение Таска в истории просмотров:
+    @Override
     public Task getTaskById(int taskId) {
         if (tasks.get(taskId) == null) {
             System.out.println("Нет Task с id = " + taskId);
             return null;
         }
 
+        // Добавляем Таск в историю просмотров:
+        historyManager.addTask(tasks.get(taskId));
+
         return tasks.get(taskId);
     }
 
-    // Получение по ID определённого Эпика:
+    // Получение по ID определённого Эпика + сохранение Эпика в истории просмотров:
+    @Override
     public Epic getEpicById(int epicId) {
         if (epics.get(epicId) == null) {
             System.out.println("Нет Epic с id = " + epicId);
             return null;
         }
 
+        // Добавляем Эпик в историю просмотров:
+        historyManager.addTask(epics.get(epicId));
+
         return epics.get(epicId);
     }
 
-    // Получение по ID определённого Сабтаска:
+    // Получение по ID определённого Сабтаска + сохранение Сабтаска в истории просмотров:
+    @Override
     public Subtask getSubtaskById(int subtaskId) {
         if (subtasks.get(subtaskId) == null) {
             System.out.println("Нет Subtask с id = " + subtaskId);
             return null;
         }
 
+        // Добавляем Сабтаск в историю просмотров:
+        historyManager.addTask(subtasks.get(subtaskId));
+
         return subtasks.get(subtaskId);
     }
 
     // Добавляем новый Таск:
+    @Override
     public int addNewTask(Task task) {
         // Генерируем новый ID:
         task.setId(generateId());
@@ -131,6 +156,7 @@ public class TaskTracker {
     }
 
     // Добавляем новый Эпик:
+    @Override
     public int addNewEpic(Epic epic) {
         // Генерируем новый ID:
         epic.setId(generateId());
@@ -141,6 +167,7 @@ public class TaskTracker {
     }
 
     // Добавляем новый Сабтаск:
+    @Override
     public Integer addNewSubtask(Subtask subtask) {
         // Находим нужный Эпик:
         Epic epic = epics.get(subtask.getEpicId());
@@ -164,6 +191,7 @@ public class TaskTracker {
     }
 
     // Обновление Таска:
+    @Override
     public void updateTask(Task task) {
         // Проверим, существует ли Таск, который мы хотим обновить:
         Task savedTask = tasks.get(task.getId());
@@ -177,6 +205,7 @@ public class TaskTracker {
     }
 
     // Обновление Сабтаска:
+    @Override
     public void updateSubtask(Subtask subtask) {
         // Проверим, существует ли Сабтаск, который мы хотим обновить:
         Subtask savedSubtask = subtasks.get(subtask.getId());
@@ -200,6 +229,7 @@ public class TaskTracker {
     }
 
     // Обновление Эпика:
+    @Override
     public void updateEpic(Epic epic) {
         // Проверим, существует ли Эпик, который мы хотим обновить:
         Epic savedEpic = epics.get(epic.getId());
@@ -214,6 +244,7 @@ public class TaskTracker {
     }
 
     // Удаление Таска по ID:
+    @Override
     public void deleteTaskById(int taskId) {
         // Проверяем, существует ли Таск:
         if (tasks.get(taskId) == null) {
@@ -226,6 +257,7 @@ public class TaskTracker {
     }
 
     // Удаление Эпика по ID:
+    @Override
     public void deleteEpicById(int epicId) {
         // Проверяем, существует ли Эпик:
         if (epics.get(epicId) == null) {
@@ -247,6 +279,7 @@ public class TaskTracker {
     }
 
     // Удаление Сабтаска по ID:
+    @Override
     public void deleteSubtaskById(Integer subtaskId) {
         // Проверяем, существует ли Сабтаск:
         if (subtasks.get(subtaskId) == null) {
@@ -266,6 +299,7 @@ public class TaskTracker {
     }
 
     // Получение списка Сабтасков определённого эпика:
+    @Override
     public ArrayList<Subtask> getEpicSubtasks(int epicId) {
         // Создаём список Сабтасков для наполнения:
         ArrayList<Subtask> epicSubtasks = new ArrayList<>();
@@ -289,17 +323,18 @@ public class TaskTracker {
     }
 
     // Проверка статуса Эпика:
-    private void updateEpicStatus(int epicId) {
+    @Override
+    public void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
         ArrayList<Integer> subtaskIds = epic.getSubtaskIds();
 
         // Проверяем на пустоту:
         if (subtaskIds.isEmpty()) {
-            epic.setStatus("NEW");
+            epic.setStatus(TaskStatus.NEW);
             return;
         }
 
-        String status = null;
+        TaskStatus status = null;
         for (int subtaskId: subtaskIds) {
             Subtask subtask = subtasks.get(subtaskId);
 
@@ -310,14 +345,21 @@ public class TaskTracker {
             }
 
             // Проверяем на равенство и IN_PROGRESS:
-            if (status.equals(subtask.getStatus()) && !status.equals("IN_PROGRESS")) {
+            if (status.equals(subtask.getStatus()) && !status.equals(TaskStatus.IN_PROGRESS)) {
                 continue;
             }
 
-            epic.setStatus("IN_PROGRESS");
+            epic.setStatus(TaskStatus.IN_PROGRESS);
             return;
         }
 
         epic.setStatus(status);
+    }
+
+    @Override
+    // Возвращаем объект со списком просмотренных задач:
+    public HistoryManager getHistoryManager() {
+
+        return historyManager;
     }
 }
