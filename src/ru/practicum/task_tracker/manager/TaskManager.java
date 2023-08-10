@@ -4,17 +4,17 @@ import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
 
     int generateId();
 
-    ArrayList<Task> getAllTasksList();
+    List<Task> getAllTasksList();
 
-    ArrayList<Epic> getAllEpicsList();
+    List<Epic> getAllEpicsList();
 
-    ArrayList<Subtask> getAllSubtasksList();
+    List<Subtask> getAllSubtasksList();
 
     void deleteAllTasks();
 
@@ -46,7 +46,7 @@ public interface TaskManager {
 
     void deleteSubtaskById(Integer subtaskId);
 
-    ArrayList<Subtask> getEpicSubtasks(int epicId);
+    List<Subtask> getEpicSubtasks(int epicId);
 
     void updateEpicStatus(int epicId);
 

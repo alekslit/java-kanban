@@ -3,12 +3,16 @@ package ru.practicum.task_tracker.manager;
 // Утилитарный класс для создания менеджеров:
 public class Managers {
 
-    public TaskManager getDefault() {
+    private Managers() {
+
+    }
+
+    public static TaskManager getDefault() {
 
         return new InMemoryTaskManager();
     }
 
-    public HistoryManager getDefaultHistory() {
+    public static HistoryManager getDefaultHistory() {
 
         return new InMemoryHistoryManager();
     }

@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager taskManager = new Managers().getDefault();
+        TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = taskManager.getHistoryManager();
 
         // Создаём и добавдяем 2 Таска:

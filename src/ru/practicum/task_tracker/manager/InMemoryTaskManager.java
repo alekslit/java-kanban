@@ -6,15 +6,17 @@ import ru.practicum.task_tracker.tasks.Task;
 import ru.practicum.task_tracker.tasks.TaskStatus;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
 
-    HistoryManager historyManager = new Managers().getDefaultHistory();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     private int currentIdNumber = 0;
 
@@ -27,7 +29,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Получение списка всех Тасков:
     @Override
-    public ArrayList<Task> getAllTasksList() {
+    public List<Task> getAllTasksList() {
         if (tasks.isEmpty()) {
             System.out.println("tasks = null");
             return new ArrayList<>();
@@ -38,7 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Получение списка всех Эпиков:
     @Override
-    public ArrayList<Epic> getAllEpicsList() {
+    public List<Epic> getAllEpicsList() {
         if (epics.isEmpty()) {
             System.out.println("epics = null");
             return new ArrayList<>();
@@ -49,7 +51,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Получение списка всех Сабтасков:
     @Override
-    public ArrayList<Subtask> getAllSubtasksList() {
+    public List<Subtask> getAllSubtasksList() {
         if (subtasks.isEmpty()) {
             System.out.println("subtasks = null");
             return new ArrayList<>();
@@ -300,14 +302,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Получение списка Сабтасков определённого эпика:
     @Override
-    public ArrayList<Subtask> getEpicSubtasks(int epicId) {
+    public List<Subtask> getEpicSubtasks(int epicId) {
         // Создаём список Сабтасков для наполнения:
-        ArrayList<Subtask> epicSubtasks = new ArrayList<>();
+        List<Subtask> epicSubtasks = new ArrayList<>();
 
         // Проверяем, существует ли эпик, и есть ли у него Сабтаски:
         if (!epics.containsKey(epicId) || epics.get(epicId).getSubtaskIds().isEmpty()) {
             System.out.println("Epic = null, или subTaskIds = null");
-            return null;
+            return new ArrayList<>();
         }
 
         // Наполняем список Сабтасками:
@@ -326,7 +328,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpicStatus(int epicId) {
         Epic epic = epics.get(epicId);
-        ArrayList<Integer> subtaskIds = epic.getSubtaskIds();
+        List<Integer> subtaskIds = epic.getSubtaskIds();
 
         // Проверяем на пустоту:
         if (subtaskIds.isEmpty()) {

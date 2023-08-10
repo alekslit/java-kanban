@@ -1,20 +1,25 @@
 package ru.practicum.task_tracker.tasks;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
     // ID Сабтасков, на которые разделён Эпик:
-    private final ArrayList<Integer> subtaskIds;
+    private final List<Integer> subtaskIds;
 
     public Epic(String name, String description) {
+
         super(name, description, TaskStatus.NEW);
         subtaskIds = new ArrayList<>();
     }
 
-    public ArrayList<Integer> getSubtaskIds() {
+    public List<Integer> getSubtaskIds() {
+
         return subtaskIds;
     }
 
     public void addSubtaskId(int subtaskId) {
+
         subtaskIds.add(subtaskId);
     }
 
