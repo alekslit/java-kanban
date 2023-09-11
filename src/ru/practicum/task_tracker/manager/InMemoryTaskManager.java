@@ -68,6 +68,11 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
+        // Очищаем историю просмотров от Тасков:
+        for (Integer id: tasks.keySet()) {
+            historyManager.remove(id);
+        }
+
         tasks.clear();
     }
 
@@ -78,6 +83,12 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("epics = null");
             return;
         }
+
+        // Очищаем историю просмотров от Эпиков:
+        for (Integer id: epics.keySet()) {
+            historyManager.remove(id);
+        }
+
         epics.clear();
 
         // Дополнительно удаляем все Сабтаски, т.к. без Эпиков не должно быть и их Сабтасков:
@@ -85,6 +96,12 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("subtasks = null");
             return;
         }
+
+        // Очищаем историю просмотров от Сабтасков:
+        for (Integer id: subtasks.keySet()) {
+            historyManager.remove(id);
+        }
+
         deleteAllSubtasks();
     }
 
@@ -95,6 +112,12 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("subtasks = null");
             return;
         }
+
+        // Очищаем историю просмотров от Сабтасков:
+        for (Integer id: subtasks.keySet()) {
+            historyManager.remove(id);
+        }
+
         subtasks.clear();
 
         // Удаляем ID всех Сабтасков из Эпиков, и проверяем статус всех Эпиков:
@@ -254,6 +277,9 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
+        // Удаляем Таск из истории просмотров:
+        historyManager.remove(taskId);
+
         // Удаляем Таск:
         tasks.remove(taskId);
     }
@@ -267,14 +293,18 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
-        // Удаляем Сабтаски Эпика, который мы хотим удалить:
+        // Удаляем Сабтаски Эпика, который мы хотим удалить + удаляем сабтаски из истории просмотров:
         if (epics.get(epicId).getSubtaskIds() != null) {
             for (int key: epics.get(epicId).getSubtaskIds()) {
                 subtasks.remove(key);
+                historyManager.remove(key);
             }
         } else {
             System.out.println("subtaskIds = null");
         }
+
+        // Удаляем Эпик из истории просмотров:
+        historyManager.remove(epicId);
 
         // Удаляем Эпик:
         epics.remove(epicId);
@@ -291,6 +321,9 @@ public class InMemoryTaskManager implements TaskManager {
 
         // Записываем в переменную Эпик ID, из Сабтаска:
         int epicId = epics.get(subtasks.get(subtaskId).getEpicId()).getId();
+
+        // Удаляем Сабтаск из истории просмотров:
+        historyManager.remove(subtaskId);
 
         // Удаляем сам Сабтаск, а потом его ID из эпика:
         subtasks.remove(subtaskId);

@@ -21,7 +21,7 @@ public class Main {
                 "Изучаем теорию и выполняем задания в тренажёре...", TaskStatus.IN_PROGRESS);
         int task2Id = taskManager.addNewTask(task2);
 
-        // Создаём и добавляем 2 Эпика - с двумями Сабтасками, и с одним:
+        // Создаём и добавляем 2 Эпика - с тремя Сабтасками, и с одним:
         Epic epic1 = new Epic("Закончить первый модуль",
                 "Изучаем теорию, выполняем задания в тренажёре, делаем ТЗ...");
         int epic1Id = taskManager.addNewEpic(epic1);
@@ -31,28 +31,42 @@ public class Main {
         Subtask subtask2 = new Subtask("Проходим 3-4 спринты",
                 "Знакомство с ООП, класс Object...", TaskStatus.IN_PROGRESS, epic1Id);
         Integer subtask2Id = taskManager.addNewSubtask(subtask2);
+        Subtask subtask3 = new Subtask("Каникулы",
+                "Ничего не делаем...", TaskStatus.IN_PROGRESS, epic1Id);
+        Integer subtask3Id = taskManager.addNewSubtask(subtask3);
 
         Epic epic2 = new Epic("Не закончить первый модуль...", "Ничего не успеть.... :( ");
         int epic2Id = taskManager.addNewEpic(epic2);
-        Subtask subtask3 = new Subtask("Просто взять и не закончить... :О ? ",
-                "Ну как же так... :( ", TaskStatus.NEW, epic2Id);
-        Integer subtask3Id = taskManager.addNewSubtask(subtask3);
 
-        // Получение объекта по ID + проверяем вывод истории просмотров:
-        System.out.println("___________Вызываем объекты по ID________________");
-        for (int i = 1; i <= 4; i++) {
-            System.out.println(taskManager.getTaskById(task2Id));
-            System.out.println(taskManager.getSubtaskById(subtask2Id));
-            System.out.println(taskManager.getEpicById(epic2Id));
-        }
-        System.out.println("___________История просмотров________________");
+        // Получение объекта по ID + проверяем вывод истории просмотров, отсутствие повторов в ней,
+        // и корректность смены ссылок нод:
+        System.out.println(taskManager.getTaskById(task1Id));
+        System.out.println(taskManager.getTaskById(task2Id));
+        System.out.println(taskManager.getEpicById(epic1Id));
+        System.out.println(taskManager.getEpicById(epic2Id));
+        System.out.println(taskManager.getSubtaskById(subtask1Id));
+        System.out.println(taskManager.getSubtaskById(subtask2Id));
+        System.out.println(taskManager.getSubtaskById(subtask3Id));
+
+        System.out.println("___________История просмотров 1________________");
         System.out.println(historyManager.getTaskHistory());
 
-        // Распечатаем список Эпиков, Тасков, и Сабтасков:
+        System.out.println(taskManager.getTaskById(task1Id));
+        System.out.println(taskManager.getSubtaskById(subtask3Id));
+        System.out.println(taskManager.getSubtaskById(subtask1Id));
+        System.out.println(taskManager.getSubtaskById(subtask2Id));
+        System.out.println(taskManager.getTaskById(task2Id));
+        System.out.println(taskManager.getEpicById(epic2Id));
+        System.out.println(taskManager.getEpicById(epic1Id));
+
+        System.out.println("___________История просмотров 2________________");
+        System.out.println(historyManager.getTaskHistory());
+
+        /*// Распечатаем список Эпиков, Тасков, и Сабтасков:
         System.out.println("___________Без изменений________________");
         System.out.println(taskManager.getAllTasksList());
         System.out.println(taskManager.getAllSubtasksList());
-        System.out.println(taskManager.getAllEpicsList());
+        System.out.println(taskManager.getAllEpicsList());*/
 
         // Удаляем все Таски, Сабтаски, или Эпики и проверяем изменения:
         /*taskManager.deleteAllTasks();
@@ -69,10 +83,10 @@ public class Main {
         System.out.println(taskManager.getAllSubtasksList());
         System.out.println(taskManager.getAllEpicsList());*/
 
-        // Распечатаем список Сабтасков определённого эпика:
-        System.out.println(taskManager.getEpicSubtasks(epic1Id));
+        /*// Распечатаем список Сабтасков определённого эпика:
+        System.out.println(taskManager.getEpicSubtasks(epic1Id));*/
 
-        // Поменяем статус Тасков и Сабтасков через методы обновления, и проверим изменение статусов всех объектов:
+        /*// Поменяем статус Тасков и Сабтасков через методы обновления, и проверим изменение статусов всех объектов:
         task1.setStatus(TaskStatus.IN_PROGRESS);
         task2.setStatus(TaskStatus.DONE);
         subtask1.setStatus(TaskStatus.NEW);
@@ -88,9 +102,9 @@ public class Main {
         System.out.println("___________Обновили статус________________");
         System.out.println(taskManager.getAllTasksList());
         System.out.println(taskManager.getAllSubtasksList());
-        System.out.println(taskManager.getAllEpicsList());
+        System.out.println(taskManager.getAllEpicsList());*/
 
-        // Удаляем Таск, Эпик и Сабтаск, и проверяем изменения:
+        /*// Удаляем Таск, Эпик и Сабтаск, и проверяем изменения:
         taskManager.deleteTaskById(task1Id);
         taskManager.deleteSubtaskById(subtask2Id);
         taskManager.deleteEpicById(epic2Id);
@@ -98,10 +112,20 @@ public class Main {
         System.out.println("___________Удалили Таск, Эпик, и Сабтаск________________");
         System.out.println(taskManager.getAllTasksList());
         System.out.println(taskManager.getAllSubtasksList());
-        System.out.println(taskManager.getAllEpicsList());
+        System.out.println(taskManager.getAllEpicsList());*/
 
-        // Ещё раз проверяем историю просмотров после вызова методов:
-        System.out.println("___________История просмотров________________");
+        // Удаляем поочерёдно задачи и проверяем изменения:
+        taskManager.deleteSubtaskById(subtask2Id);
+        taskManager.deleteTaskById(task2Id);
+        System.out.println("___________История просмотров (Удалили Сабтаск и Таск)________________");
         System.out.println(historyManager.getTaskHistory());
+
+        taskManager.deleteEpicById(epic1Id);
+        System.out.println("___________История просмотров (Удалили Эпик)________________");
+        System.out.println(historyManager.getTaskHistory());
+
+        /*// Ещё раз проверяем историю просмотров после вызова методов:
+        System.out.println("___________История просмотров________________");
+        System.out.println(historyManager.getTaskHistory());*/
     }
 }
