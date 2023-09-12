@@ -6,24 +6,20 @@ import ru.practicum.task_tracker.tasks.Task;
 import ru.practicum.task_tracker.tasks.TaskStatus;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
-
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-
     private int currentIdNumber = 0;
 
     // Генерируем новый ID:
     @Override
     public int generateId() {
-
         return currentIdNumber++;
     }
 
@@ -84,11 +80,10 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
-        // Очищаем историю просмотров от Эпиков:
+        // Очищаем историю просмотров от Эпиков + удаляем сами Эпики:
         for (Integer id: epics.keySet()) {
             historyManager.remove(id);
         }
-
         epics.clear();
 
         // Дополнительно удаляем все Сабтаски, т.к. без Эпиков не должно быть и их Сабтасков:
@@ -97,11 +92,10 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
-        // Очищаем историю просмотров от Сабтасков:
+        // Очищаем историю просмотров от Сабтасков + удаляем сами Сабтаски:
         for (Integer id: subtasks.keySet()) {
             historyManager.remove(id);
         }
-
         deleteAllSubtasks();
     }
 
@@ -113,11 +107,10 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
-        // Очищаем историю просмотров от Сабтасков:
+        // Очищаем историю просмотров от Сабтасков и удаляем сами Сабтаски:
         for (Integer id: subtasks.keySet()) {
             historyManager.remove(id);
         }
-
         subtasks.clear();
 
         // Удаляем ID всех Сабтасков из Эпиков, и проверяем статус всех Эпиков:
@@ -206,7 +199,6 @@ public class InMemoryTaskManager implements TaskManager {
         subtask.setId(generateId());
         // Записываем Сабтаск в хеш-таблицу:
         subtasks.put(subtask.getId(), subtask);
-
         // Добавляем Эпику ID его Сабтаска:
         epic.addSubtaskId(subtask.getId());
         // Проверяем статус Эпика:
@@ -248,7 +240,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         // Обновляем Сабтаск:
         subtasks.put(subtask.getId(), subtask);
-
         // Проверяем статус Эпика:
         updateEpicStatus(subtask.getEpicId());
     }
@@ -279,7 +270,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         // Удаляем Таск из истории просмотров:
         historyManager.remove(taskId);
-
         // Удаляем Таск:
         tasks.remove(taskId);
     }
@@ -305,7 +295,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         // Удаляем Эпик из истории просмотров:
         historyManager.remove(epicId);
-
         // Удаляем Эпик:
         epics.remove(epicId);
     }
@@ -321,14 +310,11 @@ public class InMemoryTaskManager implements TaskManager {
 
         // Записываем в переменную Эпик ID, из Сабтаска:
         int epicId = epics.get(subtasks.get(subtaskId).getEpicId()).getId();
-
         // Удаляем Сабтаск из истории просмотров:
         historyManager.remove(subtaskId);
-
         // Удаляем сам Сабтаск, а потом его ID из эпика:
         subtasks.remove(subtaskId);
         epics.get(epicId).getSubtaskIds().remove(subtaskId);
-
         // Проверяем статус Эпика:
         updateEpicStatus(epicId);
     }
@@ -378,7 +364,6 @@ public class InMemoryTaskManager implements TaskManager {
                 status = subtask.getStatus();
                 continue;
             }
-
             // Проверяем на равенство и IN_PROGRESS:
             if (status.equals(subtask.getStatus()) && !status.equals(TaskStatus.IN_PROGRESS)) {
                 continue;
@@ -394,7 +379,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     // Возвращаем объект со списком просмотренных задач:
     public HistoryManager getHistoryManager() {
-
         return historyManager;
     }
 }

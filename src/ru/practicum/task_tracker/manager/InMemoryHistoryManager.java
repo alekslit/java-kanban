@@ -2,26 +2,25 @@ package ru.practicum.task_tracker.manager;
 
 import ru.practicum.task_tracker.tasks.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-
     /* Реализуем свой собственный связный список, и его ноды, по аналогии с LinkedList: */
-
     // Мапа для скорости работы со списком и хранения нод, и ноды крайних элементов списка:
     private final Map<Integer, Node> taskNodes;
     private Node first;
     private Node last;
 
     public InMemoryHistoryManager() {
-
         this.taskNodes = new HashMap<>();
     }
 
     // Добавляем задачу в историю просмотров:
     @Override
     public void addTask(Task task) {
-
         // Проверим объект типа Task на null:
         if (task == null) {
             System.out.println("task = null");
@@ -30,7 +29,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         // Удаляем задачу, если она там уже есть:
         remove(task.getId());
-
         // Ставим задачу в конец двусвязного списка:
         linkLast(task);
         // Добавляем ноду задачи в мапу:
@@ -40,18 +38,15 @@ public class InMemoryHistoryManager implements HistoryManager {
     // Метод возвращает список просмотренных задач:
     @Override
     public List<Task> getTaskHistory() {
-
         return getTasks();
     }
 
     // Метод для удаления задачи из просмотра:
     @Override
     public void remove(int id) {
-
         // Находим ноду в мапе и удаляем её (если она там есть) + удаляем из двусвязного списка:
         Node node = taskNodes.remove(id);
         if (node == null) {
-
             return;
         }
 
@@ -60,14 +55,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Нода:
     private static class Node {
-
         // Поля - структура Ноды: сами данные и две ссылки на соседние элементы:
-        public Task task;
-        public Node prev;
-        public Node next;
+        private final Task task;
+        private Node prev;
+        private Node next;
 
         public Node(Task task, Node prev, Node next) {
-
             this.task = task;
             this.prev = prev;
             this.next = next;
@@ -76,14 +69,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Внутренний метод для добавления задач в конец созданного двусвязного списка:
     private void linkLast(Task task) {
-
         // Создаём ноду задачи:
         Node newNode = new Node(task, last, null);
 
         // Если первого элемента ноды ещё нет, то созданная нода - первая:
         if (first == null) {
             first = newNode;
-
         // Иначе на созданную ноду будет ссылаться первая нода:
         } else {
             last.next = newNode;
@@ -95,14 +86,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Внутренний метод для сбора задач в обычный список:
     private List<Task> getTasks() {
-
         // Создаём список для сбора задач и "находим" первый элемент в списке:
         List<Task> tasksList = new ArrayList<>();
         Node node = first;
 
         // Начиная с первой (first) добавляем задачи в список, пока следующий элемент(next) не окажется пустым:
         while (node != null) {
-
             tasksList.add(node.task);
             node = node.next;
         }
@@ -112,7 +101,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Внутренний метод, для удаления ноды из двусвязного списка / изменения ссылок:
     private void removeNode (Node node) {
-
         // Случай когда нода первая:
         if (node.prev == null) {
             first = node.next;

@@ -1,6 +1,8 @@
 package ru.practicum.task_tracker;
 
-import ru.practicum.task_tracker.manager.*;
+import ru.practicum.task_tracker.manager.HistoryManager;
+import ru.practicum.task_tracker.manager.Managers;
+import ru.practicum.task_tracker.manager.TaskManager;
 import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
@@ -9,14 +11,12 @@ import ru.practicum.task_tracker.tasks.TaskStatus;
 public class Main {
 
     public static void main(String[] args) {
-
         TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = taskManager.getHistoryManager();
 
         // Создаём и добавдяем 2 Таска:
         Task task1 = new Task("Выполнить ТЗ-1", "Разбиваем ТЗ-1 на составляющие...", TaskStatus.NEW);
         int task1Id = taskManager.addNewTask(task1);
-
         Task task2 = new Task("Изучить класс Object",
                 "Изучаем теорию и выполняем задания в тренажёре...", TaskStatus.IN_PROGRESS);
         int task2Id = taskManager.addNewTask(task2);
@@ -34,7 +34,6 @@ public class Main {
         Subtask subtask3 = new Subtask("Каникулы",
                 "Ничего не делаем...", TaskStatus.IN_PROGRESS, epic1Id);
         Integer subtask3Id = taskManager.addNewSubtask(subtask3);
-
         Epic epic2 = new Epic("Не закончить первый модуль...", "Ничего не успеть.... :( ");
         int epic2Id = taskManager.addNewEpic(epic2);
 

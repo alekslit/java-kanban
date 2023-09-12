@@ -8,18 +8,15 @@ public class Epic extends Task {
     private final List<Integer> subtaskIds;
 
     public Epic(String name, String description) {
-
         super(name, description, TaskStatus.NEW);
         subtaskIds = new ArrayList<>();
     }
 
     public List<Integer> getSubtaskIds() {
-
         return subtaskIds;
     }
 
     public void addSubtaskId(int subtaskId) {
-
         subtaskIds.add(subtaskId);
     }
 

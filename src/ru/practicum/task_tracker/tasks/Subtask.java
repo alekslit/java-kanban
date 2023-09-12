@@ -1,18 +1,15 @@
 package ru.practicum.task_tracker.tasks;
 
 public class Subtask extends Task {
-
     // ID Эпика, в рамках которого выполняется Сабтаск:
     private final int epicId;
 
     public Subtask(String name, String description, TaskStatus status, int epicId) {
-
         super(name, description, status);
         this.epicId = epicId;
     }
 
     public int getEpicId() {
-
         return epicId;
     }
 
