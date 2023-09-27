@@ -11,16 +11,40 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+    protected static final Map<Integer, Task> tasks = new HashMap<>();
+    protected static final Map<Integer, Epic> epics = new HashMap<>();
+    protected static final Map<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private int currentIdNumber = 0;
+    protected int currentIdNumber = 0;
+
+    // Метод для нахождения последнего ID:
+    public int findLastId (Map<Integer, Task> tasks, Map<Integer, Subtask> subtasks, Map<Integer, Epic> epics) {
+        int lastId = 0;
+
+        for (Integer id: tasks.keySet()) {
+            if (id > lastId) {
+                lastId = id;
+            }
+        }
+        for (Integer id: subtasks.keySet()) {
+            if (id > lastId) {
+                lastId = id;
+            }
+        }
+        for (Integer id: epics.keySet()) {
+            if (id > lastId) {
+                lastId = id;
+            }
+        }
+
+        return lastId;
+    }
 
     // Генерируем новый ID:
     @Override
     public int generateId() {
-        return currentIdNumber++;
+        currentIdNumber = findLastId(tasks, subtasks, epics);
+        return ++currentIdNumber;
     }
 
     // Получение списка всех Тасков:
