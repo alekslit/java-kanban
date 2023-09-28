@@ -11,7 +11,7 @@ import java.util.List;
 // Класс для второй реализации менеджера задач:
 public class FileBackedTasksManager extends InMemoryTaskManager {
     // Переменная для передачи информации из файла:
-    Path managerData;
+    private final Path managerData;
 
     public FileBackedTasksManager(Path managerData) {
         this.managerData = managerData;
@@ -38,13 +38,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter("./resources/managerData.csv"))) {
             fileWriter.write(managerDataToString);
         } catch (IOException exception) {
-            throw new ManagerSaveException("Ошибка записи файла.");
+            throw new ManagerSaveException("Ошибка записи файла: " + exception.getMessage());
         }
     }
 
     // Метод восстанавливает данные менеджера из файла:
     public static FileBackedTasksManager loadFromFile (Path managerData) {
-        TaskManager taskManager = new FileBackedTasksManager(managerData);
+        FileBackedTasksManager taskManager = new FileBackedTasksManager(managerData);
 
         try (BufferedReader fileReader = new BufferedReader(new FileReader(String.valueOf(managerData)))) {
             // Пропускаем заголовок в файле:
@@ -80,10 +80,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException exception) {
-            throw new ManagerSaveException("Ошибка чтения файла.");
+            throw new ManagerSaveException("Ошибка чтения файла: " + exception.getMessage());
         }
 
-        return (FileBackedTasksManager) taskManager;
+        return taskManager;
     }
 
     /* Переопределяем методы добавления задач и добавляем в них автосохранение в файл */

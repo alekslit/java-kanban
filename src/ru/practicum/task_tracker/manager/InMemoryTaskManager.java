@@ -17,33 +17,9 @@ public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager historyManager = Managers.getDefaultHistory();
     protected int currentIdNumber = 0;
 
-    // Метод для нахождения последнего ID:
-    public int findLastId (Map<Integer, Task> tasks, Map<Integer, Subtask> subtasks, Map<Integer, Epic> epics) {
-        int lastId = 0;
-
-        for (Integer id: tasks.keySet()) {
-            if (id > lastId) {
-                lastId = id;
-            }
-        }
-        for (Integer id: subtasks.keySet()) {
-            if (id > lastId) {
-                lastId = id;
-            }
-        }
-        for (Integer id: epics.keySet()) {
-            if (id > lastId) {
-                lastId = id;
-            }
-        }
-
-        return lastId;
-    }
-
     // Генерируем новый ID:
     @Override
     public int generateId() {
-        currentIdNumber = findLastId(tasks, subtasks, epics);
         return ++currentIdNumber;
     }
 

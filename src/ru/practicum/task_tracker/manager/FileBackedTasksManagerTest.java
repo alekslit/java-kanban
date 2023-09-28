@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 public class FileBackedTasksManagerTest {
     public static void main(String[] args) {
         /*// Изначальный объект FBTM:
-        TaskManager taskManager1 = new FileBackedTasksManager(Paths.get("./resources/managerData.csv"));
+        TaskManager taskManager1 = Managers.getDefault();
         HistoryManager historyManager1 = taskManager1.getHistoryManager();
 
         // Создаём и добавдяем 2 Таска:
