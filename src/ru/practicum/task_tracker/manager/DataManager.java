@@ -2,6 +2,7 @@ package ru.practicum.task_tracker.manager;
 
 import ru.practicum.task_tracker.tasks.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,9 @@ public class DataManager {
                 + task.getClass().getSimpleName().toUpperCase() + ",,"
                 + task.getName() + ",,"
                 + task.getStatus() + ",,"
-                + task.getDescription() + ",,";
+                + task.getDescription() + ",,"
+                + task.getDuration() + ",,"
+                + task.getStartTime() + ",,";
         // Если это Сабтаск то добавим в конце ID его Эпика:
         if (task instanceof Subtask) {
             Subtask subtask = (Subtask) task;
@@ -34,7 +37,7 @@ public class DataManager {
     }
 
     // Метод из строки создаёт задачу:
-    // Формат строки: (id-[0],type-[1],name-[2],status-[3],description-[4],epic[5])
+    // Формат строки: (id-[0],type-[1],name-[2],status-[3],description-[4],duration[5],endTime[6],epic[7])
     public static Task fromString(String value) {
         // Делим строку на массив строк элементов задачи:
         String[] taskElements = value.split(",,");
@@ -44,18 +47,23 @@ public class DataManager {
         String taskName = taskElements[2];
         TaskStatus taskStatus = TaskStatus.valueOf(taskElements[3]);
         String taskDescription = taskElements[4];
+        int taskDuration = Integer.parseInt(taskElements[5]);
+        LocalDateTime taskStartTime = LocalDateTime.parse(taskElements[6]);
         int epicId = 0;
-        if (taskElements.length == 6){
-            epicId = Integer.parseInt(taskElements[5]);
+        if (taskElements.length == 8){
+            epicId = Integer.parseInt(taskElements[7]);
         }
 
         switch (taskType) {
             case TASK:
-                return new Task(taskId, taskName, taskDescription, taskStatus);
+                return new Task(taskId, taskName, taskDescription, taskStatus,
+                        taskDuration, taskStartTime);
             case SUBTASK:
-                return new Subtask(taskId, taskName, taskDescription, taskStatus, epicId);
+                return new Subtask(taskId, taskName, taskDescription, taskStatus,
+                        taskDuration, taskStartTime, epicId);
             case EPIC:
-                return new Epic(taskId, taskName, taskDescription, taskStatus);
+                return new Epic(taskId, taskName, taskDescription, taskStatus,
+                        taskDuration, taskStartTime);
         }
 
         System.out.println("Неизвестный тип задачи.");

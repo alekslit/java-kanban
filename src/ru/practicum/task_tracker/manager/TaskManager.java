@@ -5,6 +5,7 @@ import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -28,7 +29,7 @@ public interface TaskManager {
 
     Subtask getSubtaskById(int subtaskId);
 
-    int addNewTask(Task task);
+    Integer addNewTask(Task task);
 
     int addNewEpic(Epic epic);
 
@@ -51,4 +52,6 @@ public interface TaskManager {
     void updateEpicStatus(int epicId);
 
     HistoryManager getHistoryManager();
+
+    Set<Task> getPrioritizedTasks();
 }

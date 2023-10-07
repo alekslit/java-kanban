@@ -1,38 +1,38 @@
-package ru.practicum.task_tracker.manager;
-
-import ru.practicum.task_tracker.tasks.Epic;
-import ru.practicum.task_tracker.tasks.Subtask;
-import ru.practicum.task_tracker.tasks.Task;
-import ru.practicum.task_tracker.tasks.TaskStatus;
-
 import java.nio.file.Paths;
 
-// Класс для тестирования FBTM:
-public class FileBackedTasksManagerTest {
-    public static void main(String[] args) {
+public class Draft {
         /*// Изначальный объект FBTM:
         TaskManager taskManager1 = Managers.getDefault();
         HistoryManager historyManager1 = taskManager1.getHistoryManager();
+        LocalDateTime data1 = LocalDateTime.of(2000, 1, 1, 1, 0);
+        LocalDateTime data2 = LocalDateTime.of(2000, 1, 1, 3, 0);
+        LocalDateTime data3 = LocalDateTime.of(2000, 1, 1, 5, 0);
+        LocalDateTime data4 = LocalDateTime.of(2000, 1, 1, 7, 0);
+        LocalDateTime data5 = LocalDateTime.of(2000, 1, 1, 9, 0);
+        int duration = 60;
 
         // Создаём и добавдяем 2 Таска:
-        Task task1 = new Task("Выполнить ТЗ-1", "Разбиваем ТЗ-1 на составляющие...", TaskStatus.NEW);
-        int task1Id = taskManager1.addNewTask(task1);
+        Task task1 = new Task("Выполнить ТЗ-1", "Разбиваем ТЗ-1 на составляющие...",
+                TaskStatus.NEW, duration, data1);
+        Integer task1Id = taskManager1.addNewTask(task1);
         Task task2 = new Task("Изучить класс Object",
-                "Изучаем теорию и выполняем задания в тренажёре...", TaskStatus.IN_PROGRESS);
-        int task2Id = taskManager1.addNewTask(task2);
+                "Изучаем теорию и выполняем задания в тренажёре...",
+                TaskStatus.IN_PROGRESS, duration, data2);
+        Integer task2Id = taskManager1.addNewTask(task2);
 
-        // Создаём и добавляем 2 Эпика - с тремя Сабтасками, и с одним:
+        // Создаём и добавляем 2 Эпика - с тремя Сабтасками, и без:
         Epic epic1 = new Epic("Закончить первый модуль",
                 "Изучаем теорию, выполняем задания в тренажёре, делаем ТЗ...");
         int epic1Id = taskManager1.addNewEpic(epic1);
         Subtask subtask1 = new Subtask("Проходим 1-2 спринты",
-                "Изучаем Методы, Классы, Объекты, Хеш-Таблицы....", TaskStatus.DONE, epic1Id);
+                "Изучаем Методы, Классы, Объекты, Хеш-Таблицы....",
+                TaskStatus.DONE, duration, data3, epic1Id);
         Integer subtask1Id = taskManager1.addNewSubtask(subtask1);
         Subtask subtask2 = new Subtask("Проходим 3-4 спринты",
-                "Знакомство с ООП, класс Object...", TaskStatus.IN_PROGRESS, epic1Id);
+                "Знакомство с ООП, класс Object...", TaskStatus.IN_PROGRESS, duration, data4, epic1Id);
         Integer subtask2Id = taskManager1.addNewSubtask(subtask2);
         Subtask subtask3 = new Subtask("Каникулы",
-                "Ничего не делаем...", TaskStatus.IN_PROGRESS, epic1Id);
+                "Ничего не делаем...", TaskStatus.IN_PROGRESS, duration, data5, epic1Id);
         Integer subtask3Id = taskManager1.addNewSubtask(subtask3);
         Epic epic2 = new Epic("Не закончить первый модуль...", "Ничего не успеть.... :( ");
         int epic2Id = taskManager1.addNewEpic(epic2);
@@ -67,7 +67,7 @@ public class FileBackedTasksManagerTest {
         System.out.println(taskManager1.getAllSubtasksList());
         System.out.println(taskManager1.getAllEpicsList());*/
 
-        // Удаляем все Таски, Сабтаски, или Эпики и проверяем изменения:
+    // Удаляем все Таски, Сабтаски, или Эпики и проверяем изменения:
         /*taskManager1.deleteAllTasks();
         System.out.println("___________Удалили Таски________________");
         System.out.println(taskManager1.getAllTasksList());*/
@@ -127,16 +127,15 @@ public class FileBackedTasksManagerTest {
         System.out.println("___________История просмотров________________");
         System.out.println(historyManager1.getTaskHistory());*/
 
-        // Пробуем восстановить FBTM из файла и проверяем, как восстановились задачи и история просмотров:
-        TaskManager taskManager2 = FileBackedTasksManager.loadFromFile(Paths.get("./resources/managerData.csv"));
-        HistoryManager historyManager2 = taskManager2.getHistoryManager();
-        // Распечатаем список Эпиков, Тасков, и Сабтасков:
+    // Пробуем восстановить FBTM из файла и проверяем, как восстановились задачи и история просмотров:
+    /*TaskManager taskManager2 = FileBackedTasksManager.loadFromFile(Paths.get("./resources/managerData.csv"));
+    HistoryManager historyManager2 = taskManager2.getHistoryManager();
+    // Распечатаем список Эпиков, Тасков, и Сабтасков:
         System.out.println("___________Восстановили задачи из файла________________");
         System.out.println(taskManager2.getAllTasksList());
         System.out.println(taskManager2.getAllSubtasksList());
         System.out.println(taskManager2.getAllEpicsList());
-        // Проверяем историю просмотров:
+    // Проверяем историю просмотров:
         System.out.println("___________Восстановили историю из файла________________");
-        System.out.println(historyManager2.getTaskHistory());
-    }
+        System.out.println(historyManager2.getTaskHistory());*/
 }

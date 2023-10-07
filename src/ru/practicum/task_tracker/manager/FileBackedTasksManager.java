@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 // Класс для второй реализации менеджера задач:
-public class FileBackedTasksManager extends InMemoryTaskManager {
+public class FileBackedTasksManager extends InMemoryTasksManager {
     // Переменная для передачи информации из файла:
     private final Path managerData;
 
@@ -20,7 +20,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     //Метод для автосохранения текущего состояния менеджера в файл:
     public void save() {
         // Предварительно сохраняем данные в переменную:
-        String managerDataToString = "id,,type,,name,,status,,description,,epic" + "\n";
+        String managerDataToString = "id,,type,,name,,status,,description,,duration,,startTime,,epic" + "\n";
 
         // Пройдёмся ID-шниками по мапам, соберём задачи:
         for (int i = 1; i <= currentIdNumber; i++) {
@@ -88,8 +88,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     /* Переопределяем методы добавления задач и добавляем в них автосохранение в файл */
     @Override
-    public int addNewTask(Task task) {
-        int taskId = super.addNewTask(task);
+    public Integer addNewTask(Task task) {
+        Integer taskId = super.addNewTask(task);
         save();
         return taskId;
     }
@@ -103,7 +103,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public Integer addNewSubtask(Subtask subtask) {
-        int subtaskId = super.addNewSubtask(subtask);
+        Integer subtaskId = super.addNewSubtask(subtask);
         save();
         return subtaskId;
     }
