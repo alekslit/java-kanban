@@ -8,338 +8,274 @@ import ru.practicum.task_tracker.tasks.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract public class TaskManagerTest<T extends TaskManager> {
 
-
     protected T taskManager;
-    LocalDateTime data1 = LocalDateTime.of(2000, 1, 1, 1, 0);
-    LocalDateTime data2 = LocalDateTime.of(2000, 1, 1, 3, 0);
-    int duration = 60;
+    protected Task task;
+    protected Epic epic;
+    protected Subtask subtask1;
+    protected Subtask subtask2;
+    protected LocalDateTime data1;
+    protected LocalDateTime data2;
+    protected LocalDateTime data3;
+    protected int duration;
+
+    public void init() {
+        // Общая тест дата для 2 реализаций: 1 Таск, 1 Эпик, 2 Сабтаска, все задачи добавлены в менеджер:
+        data1 = LocalDateTime.of(2000, 1, 1, 3, 0);
+        data2 = LocalDateTime.of(2000, 1, 1, 5, 0);
+        data3 = LocalDateTime.of(2000, 1, 1, 1, 0);
+        duration = 60;
+        task = new Task("Тест Имя1", "Тест Описание1", TaskStatus.NEW, duration, data1);
+        taskManager.addNewTask(task);
+        epic = new Epic("Тест Имя2", "Тест Описание2");
+        taskManager.addNewEpic(epic);
+        subtask1 = new Subtask("Тест Имя3", "Тест Описание3",
+                TaskStatus.NEW, duration, data2, epic.getId());
+        taskManager.addNewSubtask(subtask1);
+        subtask2 = new Subtask("Тест Имя4", "Тест Описание4",
+                TaskStatus.NEW, duration, data3, epic.getId());
+        taskManager.addNewSubtask(subtask2);
+    }
 
     @Test
     public void shouldAddNewTask() {
-        Task task = new Task("Тест Имя", "Тест Описание", TaskStatus.NEW, duration, data1);
-        final Integer taskId = taskManager.addNewTask(task);
-
         final List<Task> taskList = taskManager.getAllTasksList();
+
         assertNotNull(taskList, "Список пуст, задача не добавлена (shouldAddNewTask)");
     }
 
     @Test
     public void shouldGetAllTasksList() {
-        Task task1 = new Task("Тест Имя1", "Тест Описание1", TaskStatus.NEW, duration, data1);
-        final Integer task1Id = taskManager.addNewTask(task1);
-        Task task2 = new Task("Тест Имя2", "Тест Описание2", TaskStatus.NEW, duration, data2);
-        final Integer task2Id = taskManager.addNewTask(task2);
-
         final List<Task> taskList = taskManager.getAllTasksList();
-        assertEquals(2, taskList.size(),
+
+        assertEquals(1, taskList.size(),
                 "Неверное количество задач в списке (shouldGetAllTasksList)");
     }
 
     @Test
     public void shouldGetNullWhenTasksListIsEmpty() {
+        taskManager.deleteAllTasks();
+
         assertEquals(0, taskManager.getAllTasksList().size(),
                 "Список не пуст (shouldGetNullWhenTasksListIsEmpty)");
     }
 
     @Test
     public void shouldDeleteAllTasks() {
-        Task task1 = new Task("Тест Имя1", "Тест Описание1", TaskStatus.NEW, duration, data1);
-        final Integer task1Id = taskManager.addNewTask(task1);
-        Task task2 = new Task("Тест Имя2", "Тест Описание2", TaskStatus.NEW, duration, data2);
-        final Integer task2Id = taskManager.addNewTask(task2);
-
         taskManager.deleteAllTasks();
+
         assertEquals(0, taskManager.getAllTasksList().size(),
                 "Список не пуст (shouldDeleteAllTasks)");
     }
 
     @Test
     public void shouldGetTaskById() {
-        Task task = new Task("Тест Имя", "Тест Описание", TaskStatus.NEW, duration, data1);
-        final Integer taskId = taskManager.addNewTask(task);
+        Task taskById = taskManager.getTaskById(task.getId());
 
-        Task taskById = taskManager.getTaskById(taskId);
         assertEquals(task, taskById, "Задачи не совпали (shouldGetTaskById)");
     }
 
     @Test
     public void shouldGetNullWhenTaskByIdWithIncorrectId() {
-        Task task = new Task("Тест Имя", "Тест Описание", TaskStatus.NEW, duration, data1);
-        final Integer taskId = taskManager.addNewTask(task);
+        final int falseTaskId = 45;
 
-        final int falseTaskId = 5;
         assertNull(taskManager.getTaskById(falseTaskId),
                 "Задача найдена (shouldGetNullWhenTaskByIdWithIncorrectId)");
     }
 
     @Test
     public void shouldUpdateTask() {
-        Task task = new Task("Тест Имя1", "Тест Описание1", TaskStatus.NEW, duration, data1);
-        final Integer task1Id = taskManager.addNewTask(task);
-
         // Обновили статус:
         task.setStatus(TaskStatus.IN_PROGRESS);
+
         // Обновили Задачу:
         taskManager.updateTask(task);
+
         // Проверяем изменение статуса:
-        assertEquals(TaskStatus.IN_PROGRESS, taskManager.getTaskById(task1Id).getStatus(),
+        assertEquals(TaskStatus.IN_PROGRESS, taskManager.getTaskById(task.getId()).getStatus(),
                 "Статус не изменился (shouldUpdateTask)");
     }
 
     @Test
     public void shouldDeleteTaskById() {
-        Task task = new Task("Тест Имя1", "Тест Описание1", TaskStatus.NEW, duration, data1);
-        final Integer task1Id = taskManager.addNewTask(task);
+        taskManager.deleteTaskById(task.getId());
 
-        taskManager.deleteTaskById(task1Id);
-        assertNull(taskManager.getTaskById(task1Id), "Задача не удалена (shouldDeleteTaskById)");
+        assertNull(taskManager.getTaskById(task.getId()), "Задача не удалена (shouldDeleteTaskById)");
     }
 
     /***--- Тесты для Subtask ---***/
     @Test
     public void shouldAddNewSubtask() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtaskId = taskManager.addNewSubtask(subtask);
-
         final List<Epic> epicList = taskManager.getAllEpicsList();
         final List<Subtask> subtaskList = taskManager.getAllSubtasksList();
+
         assertNotNull(epicList, "Список пуст, задача не добавлена (addNewSubtask)");
         assertNotNull(subtaskList, "Список пуст, задача не добавлена (addNewSubtask)");
     }
 
     @Test
     public void shouldNullWhenAddNewSubtaskWithoutEpic() {
-        final int epicId = 5;
-        Subtask subtask = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
+        final int fakeEpicId = 25;
 
-        assertNull(taskManager.addNewSubtask(subtask),
+        final Subtask subtaskWithFakeEpicId = new Subtask("Тест Имя5", "Тест Описание5",
+                TaskStatus.NEW, duration, LocalDateTime.now(), fakeEpicId);
+
+        assertNull(taskManager.addNewSubtask(subtaskWithFakeEpicId),
                 "Ошибка: задача добавлена (shouldNullWhenAddNewSubtaskWithoutEpic)");
     }
 
     @Test
     public void shouldGetAllSubtasksList() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3",
-                TaskStatus.NEW, duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
-
         final List<Subtask> subtaskList = taskManager.getAllSubtasksList();
+
         assertEquals(2, subtaskList.size(),
                 "Неверное количество задач в списке (shouldGetAllSubtasksList)");
     }
 
     @Test
     public void shouldGetNullWhenSubtaskListIsEmpty() {
+        taskManager.deleteAllSubtasks();
+
         assertEquals(0, taskManager.getAllSubtasksList().size(),
                 "Список не пуст (shouldGetNullWhenSubtaskListIsEmpty)");
     }
 
     @Test
     public void shouldDeleteAllSubtasks() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3", TaskStatus.NEW,
-                duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
-
         taskManager.deleteAllSubtasks();
+
         assertEquals(0, taskManager.getAllSubtasksList().size(),
                 "Список не пуст (shouldDeleteAllSubtasks)");
     }
+
     @Test
     public void shouldGetSubtaskById() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
+        final Subtask subtaskById = taskManager.getSubtaskById(subtask1.getId());
 
-        Subtask subtaskById = taskManager.getSubtaskById(subtask1Id);
         assertEquals(subtask1, subtaskById, "Задачи не совпали (shouldGetSubtaskById)");
     }
 
     @Test
     public void shouldGetNullWhenSubtaskByIdWithIncorrectId() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
+        final int falseSubtaskId = 55;
 
-        final int falseSubtaskId = 25;
         assertNull(taskManager.getSubtaskById(falseSubtaskId),
                 "Ошибка: задача найдена (shouldGetNullWhenSubtaskByIdWithIncorrectId)");
     }
 
     @Test
     public void shouldUpdateSubtask() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-
         subtask1.setStatus(TaskStatus.IN_PROGRESS);
+
         taskManager.updateSubtask(subtask1);
-        assertEquals(TaskStatus.IN_PROGRESS, taskManager.getSubtaskById(subtask1Id).getStatus(),
+
+        assertEquals(TaskStatus.IN_PROGRESS, taskManager.getSubtaskById(subtask1.getId()).getStatus(),
                 "Статус не изменился (shouldUpdateSubtask)");
     }
 
     @Test
     public void shouldDeleteSubtaskById() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
+        taskManager.deleteSubtaskById(subtask1.getId());
 
-        taskManager.deleteSubtaskById(subtask1Id);
-        assertNull(taskManager.getSubtaskById(subtask1Id),
+        assertNull(taskManager.getSubtaskById(subtask1.getId()),
                 "Задача не удалена (shouldDeleteSubtaskById)");
     }
 
     @Test
     public void shouldGetEpicSubtasks() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3",
-                TaskStatus.NEW, duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
+        List<Subtask> epicSubtasks = taskManager.getEpicSubtasks(epic.getId());
 
-        List<Subtask> epicSubtasks = taskManager.getEpicSubtasks(epicId);
         assertEquals(2, epicSubtasks.size(),
                 "Неверное количество задач в списке (shouldGetEpicSubtasks)");
     }
 
     @Test
     public void shouldGetNullEpicSubtasksWhenEpicWithoutSubtask() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
+        taskManager.deleteAllSubtasks();
 
-        assertEquals(0, taskManager.getEpicSubtasks(epicId).size(),
+        assertEquals(0, taskManager.getEpicSubtasks(epic.getId()).size(),
                 "Ошибка: список создан без задач (shouldGetNullEpicSubtasksWhenEpicWithoutSubtask)");
     }
 
     /***--- Тесты для Epic ---***/
     @Test
     public void shouldAddNewEpic() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-
         final List<Epic> epicList = taskManager.getAllEpicsList();
+
         assertNotNull(epicList, "Список пуст, задача не добавлена (shouldAddNewEpic)");
     }
 
     @Test
     public void shouldGetAllEpicsList() {
-        Epic epic1 = new Epic("Тест Имя1", "Тест Описание1");
-        final int epic1Id = taskManager.addNewEpic(epic1);
-        Epic epic2 = new Epic("Тест Имя2", "Тест Описание2");
-        final int epic2Id = taskManager.addNewEpic(epic2);
-
         final List<Epic> epicList = taskManager.getAllEpicsList();
-        assertEquals(2, epicList.size(),
+
+        assertEquals(1, epicList.size(),
                 "Неверное количество задач в списке (shouldGetAllEpicsList)");
     }
 
     @Test
     public void shouldGetNullWhenEpicListIsEmpty() {
+        taskManager.deleteAllEpics();
+
         final List<Epic> epicList = taskManager.getAllEpicsList();
+
         assertEquals(0, epicList.size(),
                 "Список не пуст (shouldGetNullWhenEpicListIsEmpty)");
     }
 
     @Test
     public void deleteAllEpics() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Epic epic2 = new Epic("Тест Имя4", "Тест Описание4");
-        final int epic2Id = taskManager.addNewEpic(epic2);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3",
-                TaskStatus.NEW, duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
-
         taskManager.deleteAllEpics();
+
         assertEquals(0, taskManager.getAllSubtasksList().size(),"Список не пуст (deleteAllEpics)");
         assertEquals(0, taskManager.getAllEpicsList().size(),"Список не пуст (deleteAllEpics)");
     }
 
     @Test
     public void shouldGetEpicById() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
+        final Epic epicById = taskManager.getEpicById(epic.getId());
 
-        Epic epicById = taskManager.getEpicById(epicId);
         assertEquals(epic, epicById, "Задачи не совпали (shouldGetEpicById)");
     }
 
     @Test
     public void shouldGetNullWhenEpicByIdWithIncorrectId() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
+        final int falseEpicId = 65;
 
-        final int falseEpicId = 25;
         assertNull(taskManager.getSubtaskById(falseEpicId),
                 "Ошибка: задача найдена (shouldGetNullWhenEpicByIdWithIncorrectId)");
     }
 
     @Test
     public void shouldUpdateEpic() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
+        epic.setName("Тест Имя12");
+        epic.setDescription("Тест Описание12");
 
-        epic.setName("Тест Имя2");
-        epic.setDescription("Тест Описание2");
         taskManager.updateEpic(epic);
-        assertEquals("Тест Имя2", taskManager.getEpicById(epicId).getName(),
+
+        assertEquals("Тест Имя12", taskManager.getEpicById(epic.getId()).getName(),
                 "Название не обновилось (shouldUpdateEpic)");
-        assertEquals("Тест Описание2", taskManager.getEpicById(epicId).getDescription(),
+        assertEquals("Тест Описание12", taskManager.getEpicById(epic.getId()).getDescription(),
                 "Описание не обновилось (shouldUpdateEpic)");
     }
 
     @Test
-    public void shouldDeleteEpicById() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3",
-                TaskStatus.NEW, duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
+    public void shouldDeleteEpicByIdAndHisSubtask() {
+        taskManager.deleteEpicById(epic.getId());
 
-        taskManager.deleteEpicById(epicId);
         assertEquals(0, taskManager.getAllSubtasksList().size(),
                 "Подзадачи не удалены (shouldDeleteEpicById)");
-        assertNull(taskManager.getEpicById(epicId), "Задача не удалена (shouldDeleteEpicById)");
+        assertNull(taskManager.getEpicById(epic.getId()), "Задача не удалена (shouldDeleteEpicById)");
     }
 
     @Test
     public void shouldUpdateEpicStatusToNewWhenSubtasksIsEmpty() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
+        taskManager.deleteAllSubtasks();
 
         assertEquals(TaskStatus.NEW, epic.getStatus(),
                 "Статус рассчитан ошибочно (shouldUpdateEpicStatusToNewWhenSubtasksIsEmpty)");
@@ -348,29 +284,16 @@ abstract public class TaskManagerTest<T extends TaskManager> {
     /***--- Тесты для обновления Epic ---***/
     @Test
     public void shouldUpdateEpicStatusToNewWhenAllSubtasksStatusIsNew() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3",
-                TaskStatus.NEW, duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
-
         assertEquals(TaskStatus.NEW, epic.getStatus(),
                 "Статус рассчитан ошибочно (shouldUpdateEpicStatusToNewWhenAllSubtasksStatusIsNew)");
     }
 
     @Test
     public void shouldUpdateEpicStatusToDoneWhenAllSubtasksStatusIsDone() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.DONE, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3",
-                TaskStatus.DONE, duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
+        subtask1.setStatus(TaskStatus.DONE);
+        subtask2.setStatus(TaskStatus.DONE);
+        taskManager.updateSubtask(subtask1);
+        taskManager.updateSubtask(subtask2);
 
         assertEquals(TaskStatus.DONE, epic.getStatus(),
                 "Статус рассчитан ошибочно (shouldUpdateEpicStatusToDoneWhenAllSubtasksStatusIsDone)");
@@ -378,14 +301,8 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldUpdateEpicStatusToInProgressWhenSubtasksStatusIsNewAndDone() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.NEW, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3",
-                TaskStatus.DONE, duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
+        subtask2.setStatus(TaskStatus.DONE);
+        taskManager.updateSubtask(subtask2);
 
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus(),
                 "Статус рассчитан ошибочно "
@@ -394,14 +311,10 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldUpdateEpicStatusToInProgressWhenAllSubtasksStatusIsInProgress() {
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.IN_PROGRESS, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3",
-                TaskStatus.IN_PROGRESS, duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
+        subtask1.setStatus(TaskStatus.IN_PROGRESS);
+        subtask2.setStatus(TaskStatus.IN_PROGRESS);
+        taskManager.updateSubtask(subtask1);
+        taskManager.updateSubtask(subtask2);
 
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus(),
                 "Статус рассчитан ошибочно "
@@ -411,21 +324,53 @@ abstract public class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldUpdateEpicDurationAndTime() {
         // Проверим обновление времени у Эпика: должен быть сумарный duration от Сабтасков,
-        // startTime от первого Сабтаска, а endTime от второго Сабтаска:
-        Epic epic = new Epic("Тест Имя1", "Тест Описание1");
-        final int epicId = taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Тест Имя2", "Тест Описание2",
-                TaskStatus.IN_PROGRESS, duration, data1, epicId);
-        final Integer subtask1Id = taskManager.addNewSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Тест Имя3", "Тест Описание3",
-                TaskStatus.IN_PROGRESS, duration, data2, epicId);
-        final Integer subtask2Id = taskManager.addNewSubtask(subtask2);
+        // startTime от второго Сабтаска, а endTime от первого Сабтаска:
 
         assertEquals((subtask1.getDuration() + subtask2.getDuration()), epic.getDuration(),
                 "duration рассчитан неверно (shouldUpdateEpicDurationAndTime)");
-        assertEquals(subtask1.getStartTime(), epic.getStartTime(),
+        assertEquals(subtask2.getStartTime(), epic.getStartTime(),
                 "startTime рассчитан неверно (shouldUpdateEpicDurationAndTime)");
-        assertEquals(subtask2.getEndTime(), epic.getEndTime(),
+        assertEquals(subtask1.getEndTime(), epic.getEndTime(),
                 "endTime рассчитан неверно (shouldUpdateEpicDurationAndTime)");
+    }
+
+    /*---Тест работы сортировки---*/
+    @Test
+    public void shouldGetSortedList() {
+        // Проверим отсортирован ли список:
+        Set<Task> sortedTaskList = taskManager.getPrioritizedTasks();
+        List<Task> df = List.copyOf(sortedTaskList);
+
+        boolean isSortedList = (df.get(0).getStartTime().isBefore(df.get(1).getStartTime())
+                && df.get(1).getStartTime().isBefore(df.get(2).getStartTime()));
+
+        assertTrue(isSortedList, "Список не отсортирован по времени старта (shouldGetSortedList)");
+    }
+
+    /*---Тест проверки поиска пересечений---*/
+    @Test
+    public void shouldGetTwoEqualsTasksListAfterAddTasksWithIncorrectDateTime() {
+        // Пробуем добавить задачи которые пересекаются по времени с subtask2
+        // с разных сторон (начало, середина, конец):
+        List<Task> beforeAddTask = taskManager.getAllTasksList();
+        final LocalDateTime data4 = LocalDateTime.of(2000, 1, 1, 0, 45);
+        final LocalDateTime data5 = LocalDateTime.of(2000, 1, 1, 1, 10);
+        final LocalDateTime data6 = LocalDateTime.of(2000, 1, 1, 1, 45);
+        final int duration2 = 45;
+        final Task task2 = new Task("Тест Имя10", "Тест Описание10",
+                TaskStatus.NEW, duration2, data4);
+        final Task task3 = new Task("Тест Имя11", "Тест Описание11",
+                TaskStatus.IN_PROGRESS, duration2, data5);
+        final Task task4 = new Task("Тест Имя12", "Тест Описание12",
+                TaskStatus.NEW, duration2, data6);
+
+        taskManager.addNewTask(task2);
+        taskManager.addNewTask(task3);
+        taskManager.addNewTask(task4);
+        List<Task> afterAddTask = taskManager.getAllTasksList();
+
+        assertEquals(beforeAddTask.size(), afterAddTask.size(),
+                "Ошибка: пересекающиеся задачи"
+                        + " добавлены (shouldGetTwoEqualsTasksListAfterAddTasksWithIncorrectDateTime)");
     }
 }

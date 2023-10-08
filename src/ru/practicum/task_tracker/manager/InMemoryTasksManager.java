@@ -418,6 +418,7 @@ public class InMemoryTasksManager implements TaskManager {
         return historyManager;
     }
 
+    @Override
     // Метод рассчитывает поля duration, startTime и endTime Эпика:
     public void updateEpicTimeDuration(int epicId) {
         Epic epic = epics.get(epicId);
@@ -458,6 +459,7 @@ public class InMemoryTasksManager implements TaskManager {
         return sortedTaskList;
     }
 
+    @Override
     // Метод для проверки пересечений задач по времени:
     public boolean isIntersectionsTasksByTime(Task task) {
         Set<Task> sortedTaskList = getPrioritizedTasks();
@@ -480,5 +482,12 @@ public class InMemoryTasksManager implements TaskManager {
         }
 
         return false;
+    }
+
+    @Override
+    public void deleteAll() {
+        deleteAllTasks();
+        deleteAllSubtasks();
+        deleteAllEpics();
     }
 }

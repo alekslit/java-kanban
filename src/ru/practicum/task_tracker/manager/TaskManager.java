@@ -54,4 +54,10 @@ public interface TaskManager {
     HistoryManager getHistoryManager();
 
     Set<Task> getPrioritizedTasks();
+
+    void updateEpicTimeDuration(int epicId);
+
+    public boolean isIntersectionsTasksByTime(Task task);
+
+    void deleteAll();
 }

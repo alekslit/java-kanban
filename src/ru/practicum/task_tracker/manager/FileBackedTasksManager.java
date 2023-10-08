@@ -35,7 +35,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
         // Отделяем задачи от истории пустой строкой и добавляем историю:
         managerDataToString += "\n" + DataManager.historyToString(getHistoryManager());
-        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter("./resources/managerData.csv"))) {
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(managerData.toFile()))) {
             fileWriter.write(managerDataToString);
         } catch (IOException exception) {
             throw new ManagerSaveException("Ошибка записи файла: " + exception.getMessage());
@@ -184,6 +184,12 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     @Override
     public void deleteSubtaskById(Integer subtaskId) {
         super.deleteSubtaskById(subtaskId);
+        save();
+    }
+
+    @Override
+    public void deleteAll() {
+        super.deleteAll();
         save();
     }
 }
