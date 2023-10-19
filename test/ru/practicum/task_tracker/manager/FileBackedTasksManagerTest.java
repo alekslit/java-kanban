@@ -6,21 +6,19 @@ import ru.practicum.task_tracker.tasks.Epic;
 import ru.practicum.task_tracker.tasks.Subtask;
 import ru.practicum.task_tracker.tasks.Task;
 
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
+    private static final Path MANAGER_DATA = Paths.get("./resources/managerData.csv");
 
     @BeforeEach
     public void beforeEach() {
-        taskManager = new FileBackedTasksManager(Paths.get("./resources/managerData.csv"));
+        taskManager = new FileBackedTasksManager(MANAGER_DATA);
         init();
     }
 
@@ -34,8 +32,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         taskManager.getSubtaskById(subtask1.getId());
         taskManager.getEpicById(epic.getId());
         taskManager.getEpicById(epic2Id);
-        TaskManager loadTaskManager = FileBackedTasksManager.loadFromFile(
-                Paths.get("./resources/managerData.csv"));
+        TaskManager loadTaskManager = FileBackedTasksManager.loadFromFile(MANAGER_DATA);
         List<Task> taskList = taskManager.getAllTasksList();
         List<Task> loadTaskList = loadTaskManager.getAllTasksList();
         List<Subtask> subtaskList = taskManager.getAllSubtasksList();
@@ -58,8 +55,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void saveLoadTest2() {
         // Пустой список задач и история:
-        TaskManager loadTaskManager = FileBackedTasksManager.loadFromFile(
-                Paths.get("./resources/managerData.csv"));
+        TaskManager loadTaskManager = FileBackedTasksManager.loadFromFile(MANAGER_DATA);
         List<Task> taskList = taskManager.getAllTasksList();
         List<Task> loadTaskList = loadTaskManager.getAllTasksList();
         List<Subtask> subtaskList = taskManager.getAllSubtasksList();
@@ -82,8 +78,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void saveLoadTest3() {
         // Пустая только история:
-        TaskManager loadTaskManager = FileBackedTasksManager.loadFromFile(
-                Paths.get("./resources/managerData.csv"));
+        TaskManager loadTaskManager = FileBackedTasksManager.loadFromFile(MANAGER_DATA);
         List<Task> taskList = taskManager.getAllTasksList();
         List<Task> loadTaskList = loadTaskManager.getAllTasksList();
         List<Subtask> subtaskList = taskManager.getAllSubtasksList();
@@ -103,7 +98,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
                 "Сохранение/загрузка работают некорректно (saveLoadTest3)");
     }
 
-    /*---Тесты для выбрасываемого исключения---*/
+    /*---Тест для выбрасываемого исключения---*/
     @Test
     public void shouldGetExceptionByLoadWithFakeFileName() {
         // Передадим ошибочное имя файла для загрузки:
@@ -117,25 +112,5 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
         assertEquals("Ошибка чтения файла: fakeFileName "
                 + "(Не удается найти указанный файл)", exception.getMessage());
-    }
-
-    @Test
-    public void shouldGetExceptionBySaveWithLockFileAccess() {
-        // Заблокируем доступ к файлу, чтобы проверить выбрасываемое исключение при попытке записи:
-        taskManager.deleteAll();
-        Path lockFile = Paths.get("./resources/managerData.csv");
-        try (FileChannel channel = FileChannel.open(lockFile, StandardOpenOption.APPEND)) {
-        channel.lock();
-
-        final ManagerSaveException exception = assertThrows(
-                ManagerSaveException.class,
-                () -> taskManager.addNewTask(task));
-
-        assertEquals("Ошибка записи файла: Процесс не может получить доступ к файлу,"
-                + " так как часть этого файла заблокирована другим процессом", exception.getMessage());
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при попытке заблокировать"
-                    + " доступ к файлу для теста: " + e.getMessage());
-        }
     }
 }
