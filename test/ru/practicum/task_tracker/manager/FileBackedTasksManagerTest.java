@@ -122,6 +122,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void shouldGetExceptionBySaveWithLockFileAccess() {
         // Заблокируем доступ к файлу, чтобы проверить выбрасываемое исключение при попытке записи:
+        taskManager.deleteAll();
         Path lockFile = Paths.get("./resources/managerData.csv");
         try (FileChannel channel = FileChannel.open(lockFile, StandardOpenOption.APPEND)) {
         channel.lock();
