@@ -28,16 +28,12 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void saveLoadTest1() {
         // Обычная ситуация: все типы задач + история + 1 Эпик без подзадач:
-        final Integer taskId = taskManager.addNewTask(task);
-        final int epic1Id = taskManager.addNewEpic(epic);
         final Epic epic2 = new Epic("Тест Имя6", "Тест Описание6");
         final int epic2Id = taskManager.addNewEpic(epic2);
-        final Integer subtaskId = taskManager.addNewSubtask(subtask1);
-        taskManager.getTaskById(taskId);
-        taskManager.getSubtaskById(subtaskId);
-        taskManager.getEpicById(epic1Id);
+        taskManager.getTaskById(task.getId());
+        taskManager.getSubtaskById(subtask1.getId());
+        taskManager.getEpicById(epic.getId());
         taskManager.getEpicById(epic2Id);
-
         TaskManager loadTaskManager = FileBackedTasksManager.loadFromFile(
                 Paths.get("./resources/managerData.csv"));
         List<Task> taskList = taskManager.getAllTasksList();
@@ -62,8 +58,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void saveLoadTest2() {
         // Пустой список задач и история:
-        taskManager.deleteAll();
-
         TaskManager loadTaskManager = FileBackedTasksManager.loadFromFile(
                 Paths.get("./resources/managerData.csv"));
         List<Task> taskList = taskManager.getAllTasksList();
@@ -88,10 +82,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void saveLoadTest3() {
         // Пустая только история:
-        taskManager.addNewTask(task);
-        taskManager.addNewEpic(epic);
-        taskManager.addNewSubtask(subtask1);
-
         TaskManager loadTaskManager = FileBackedTasksManager.loadFromFile(
                 Paths.get("./resources/managerData.csv"));
         List<Task> taskList = taskManager.getAllTasksList();

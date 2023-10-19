@@ -27,12 +27,13 @@ public class HistoryManagerTest {
 
     @BeforeEach
     public void beforeEach() {
-        // Обнуляем менеджер и историю + создаём и добавляем задачи перед каждым тестом:
+        // Общая тест дата для этого класса: 1 Таск, 1 Эпик, 2 Сабтаска, все задачи добавлены в менеджер,
+        // но не добавлены в историю:
         data1 = LocalDateTime.of(2000, 1, 1, 3, 0);
         data2 = LocalDateTime.of(2000, 1, 1, 5, 0);
         data3 = LocalDateTime.of(2000, 1, 1, 1, 0);
         duration = 60;
-        taskManager = Managers.getDefault();
+        taskManager = new InMemoryTasksManager();
         historyManager = taskManager.getHistoryManager();
         task = new Task("Тест Имя1", "Тест Описание1", TaskStatus.NEW, duration, data1);
         taskManager.addNewTask(task);
@@ -60,8 +61,6 @@ public class HistoryManagerTest {
 
     @Test
     public void shouldGetIsEmptyTaskHistoryWhenNoAddTask() {
-        taskManager.deleteAll();
-
         final List<Task> taskHistory = historyManager.getTaskHistory();
 
         assertEquals(0, taskHistory.size(),

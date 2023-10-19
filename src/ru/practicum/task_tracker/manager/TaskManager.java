@@ -8,56 +8,61 @@ import java.util.List;
 import java.util.Set;
 
 public interface TaskManager {
-
-    int generateId();
-
+    /*---Основные методы Тасков---*/
     List<Task> getAllTasksList();
-
-    List<Epic> getAllEpicsList();
-
-    List<Subtask> getAllSubtasksList();
-
-    void deleteAllTasks();
-
-    void deleteAllEpics();
-
-    void deleteAllSubtasks();
 
     Task getTaskById(int taskId);
 
-    Epic getEpicById(int epicId);
-
-    Subtask getSubtaskById(int subtaskId);
-
     Integer addNewTask(Task task);
-
-    int addNewEpic(Epic epic);
-
-    Integer addNewSubtask(Subtask subtask);
 
     void updateTask(Task task);
 
-    void updateSubtask(Subtask subtask);
-
-    void updateEpic(Epic epic);
-
     void deleteTaskById(int taskId);
 
-    void deleteEpicById(int epicId);
+    void deleteAllTasks();
+
+
+    /*---Основные методы Сабтасков--*/
+    List<Subtask> getAllSubtasksList();
+
+    Subtask getSubtaskById(int subtaskId);
+
+    Integer addNewSubtask(Subtask subtask);
+
+    void updateSubtask(Subtask subtask);
 
     void deleteSubtaskById(Integer subtaskId);
 
-    List<Subtask> getEpicSubtasks(int epicId);
+    void deleteAllSubtasks();
 
-    void updateEpicStatus(int epicId);
+    /*---Основные методы Эпиков---*/
+    List<Epic> getAllEpicsList();
+
+    Epic getEpicById(int epicId);
+
+    int addNewEpic(Epic epic);
+
+    void updateEpic(Epic epic);
+
+    void deleteEpicById(int epicId);
+
+    void deleteAllEpics();
+
+    /*---Основные общие методы---*/
+    List<Subtask> getEpicSubtasks(int epicId);
 
     HistoryManager getHistoryManager();
 
     Set<Task> getPrioritizedTasks();
 
+    void deleteAll();
+
+    /*---Прочие/вспомогательные методы---*/
+    int generateId();
+
+    void updateEpicStatus(int epicId);
+
     void updateEpicTimeDuration(int epicId);
 
-    public boolean isIntersectionsTasksByTime(Task task);
-
-    void deleteAll();
+    boolean isIntersectionsTasksByTime(Task task);
 }

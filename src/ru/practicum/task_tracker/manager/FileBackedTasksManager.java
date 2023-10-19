@@ -11,11 +11,13 @@ import java.util.List;
 // Класс для второй реализации менеджера задач:
 public class FileBackedTasksManager extends InMemoryTasksManager {
     // Переменная для передачи информации из файла:
-    private final Path managerData;
+    private Path managerData;
 
     public FileBackedTasksManager(Path managerData) {
         this.managerData = managerData;
     }
+
+    public FileBackedTasksManager() {}
 
     //Метод для автосохранения текущего состояния менеджера в файл:
     public void save() {
@@ -70,11 +72,11 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
                 String historyString = fileReader.readLine();
                 List<Integer> historyIds = DataManager.historyFromString(historyString);
                 for (Integer id: historyIds) {
-                    if (tasks.containsKey(id)) {
+                    if (taskManager.tasks.containsKey(id)) {
                         taskManager.getTaskById(id);
-                    } else if (subtasks.containsKey(id)) {
+                    } else if (taskManager.subtasks.containsKey(id)) {
                         taskManager.getSubtaskById(id);
-                    } else if (epics.containsKey(id)) {
+                    } else if (taskManager.epics.containsKey(id)) {
                         taskManager.getEpicById(id);
                     }
                 }

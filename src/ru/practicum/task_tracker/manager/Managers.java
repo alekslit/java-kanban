@@ -1,6 +1,6 @@
 package ru.practicum.task_tracker.manager;
 
-import java.nio.file.Paths;
+import ru.practicum.task_tracker.manager.http_task_manager.HttpTaskManager;
 
 // Утилитарный класс для создания менеджеров:
 public class Managers {
@@ -9,7 +9,7 @@ public class Managers {
     }
 
     public static TaskManager getDefault() {
-        return new FileBackedTasksManager(Paths.get("./resources/managerData.csv"));
+        return new HttpTaskManager();
     }
 
     public static HistoryManager getDefaultHistory() {

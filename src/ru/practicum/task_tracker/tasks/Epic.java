@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Epic extends Task {
     // ID Сабтасков, на которые разделён Эпик:
-    private final List<Integer> subtaskIds;
+    private List<Integer> subtaskIds;
 
     public Epic(String name, String description) {
         this.name = name;
@@ -31,6 +31,10 @@ public class Epic extends Task {
 
     public List<Integer> getSubtaskIds() {
         return subtaskIds;
+    }
+
+    public void setSubtaskIds(List<Integer> subtaskIds) {
+        this.subtaskIds = subtaskIds;
     }
 
     public void addSubtaskId(int subtaskId) {
@@ -67,5 +71,10 @@ public class Epic extends Task {
         Epic epic = (Epic) obj;
         return id == epic.id && Objects.equals(name, epic.name) &&
                 Objects.equals(description, epic.description) && status == epic.status;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return this.endTime;
     }
 }

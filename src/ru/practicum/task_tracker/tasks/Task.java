@@ -93,7 +93,7 @@ public class Task {
                 && endTime.equals(task.endTime);
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
@@ -110,6 +110,7 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
+        endTime = startTime.plusMinutes(duration);
         return endTime;
     }
 

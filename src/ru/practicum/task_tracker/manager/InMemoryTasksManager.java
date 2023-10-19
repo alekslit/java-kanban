@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTasksManager implements TaskManager {
-    protected static final Map<Integer, Task> tasks = new HashMap<>();
-    protected static final Map<Integer, Epic> epics = new HashMap<>();
-    protected static final Map<Integer, Subtask> subtasks = new HashMap<>();
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private static final Set<Task> sortedTaskList = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    protected final Set<Task> sortedTaskList = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     protected int currentIdNumber = 0;
 
     // Генерируем новый ID:
@@ -184,6 +184,14 @@ public class InMemoryTasksManager implements TaskManager {
     // Добавляем новый Эпик:
     @Override
     public int addNewEpic(Epic epic) {
+        // Если создаём новый Эпик через клиент:
+        if (epic.getStatus() == null && epic.getDuration() == null
+                && epic.getStartTime() == null && epic.getSubtaskIds() == null) {
+            epic.setStatus(TaskStatus.NEW);
+            epic.setDuration(0);
+            epic.setStartTime(LocalDateTime.now());
+            epic.setSubtaskIds(new ArrayList<>());
+        }
         // Генерируем новый ID:
         epic.setId(generateId());
         // Записываем Эпик в хеш-таблицу:
@@ -456,6 +464,10 @@ public class InMemoryTasksManager implements TaskManager {
 
     @Override
     public Set<Task> getPrioritizedTasks() {
+        if (sortedTaskList.isEmpty()) {
+            System.out.println("sortedTaskList = null");
+            return new TreeSet<>();
+        }
         return sortedTaskList;
     }
 
@@ -463,7 +475,7 @@ public class InMemoryTasksManager implements TaskManager {
     // Метод для проверки пересечений задач по времени:
     public boolean isIntersectionsTasksByTime(Task task) {
         Set<Task> sortedTaskList = getPrioritizedTasks();
-        if(sortedTaskList.isEmpty() || sortedTaskList.contains(task)) {
+        if(sortedTaskList.isEmpty()) {
             return false;
         }
 
